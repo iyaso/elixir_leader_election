@@ -1,8 +1,22 @@
-defmodule Server do
+defmodule LeaderElection.NodeState do
+  defstruct id: nil,
+            port: nil,
+            leader_id: nil,
+            is_leader: false,
+            # All nodes know each other's addresses and ports
+            nodes: [1, 2, 3, 4, 5],
+            time_ms: 2000,
+            election_timer: nil,
+            ping_timer: nil,
+            leader_timeout_timer: nil
+end
+
+defmodule LeaderElection.Node do
   use GenServer
-  import HelperFunctions
-  import MessageHandler
-  import Network
+  import LeaderElection.HelperFunctions
+  import LeaderElection.MessageHandler
+  import LeaderElection.Network
+  import LeaderElection.Timer
 
   def child_spec(node_id) do
     %{
@@ -18,11 +32,11 @@ defmodule Server do
   @impl GenServer
   def init(id) do
     port = 5000 + id
-    state = %NodeState{id: id, port: port}
+    state = %LeaderElection.NodeState{id: id, port: port}
 
     IO.puts("Node started on port #{state.port}")
 
-    Task.start_link(fn -> Network.listen(state.port) end)
+    Task.start_link(fn -> listen(state.port) end)
 
     # Newly started nodes initiate the leader selection procedure immediately after starting
     send(self(), :start_election)

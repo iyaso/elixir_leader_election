@@ -1,4 +1,4 @@
-defmodule Network do
+defmodule LeaderElection.Network do
   def listen(port) do
     {:ok, socket} =
       :gen_tcp.listen(port, [:binary, packet: :line, active: false, reuseaddr: true])
@@ -20,7 +20,7 @@ defmodule Network do
     case :gen_tcp.recv(client, 0) do
       {:ok, data} ->
         msg = String.trim(data)
-        GenServer.cast(Server, {:handle_network_message, msg})
+        GenServer.cast(Node, {:handle_network_message, msg})
 
       _ ->
         :ok
