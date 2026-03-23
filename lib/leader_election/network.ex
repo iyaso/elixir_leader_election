@@ -1,22 +1,32 @@
 defmodule Network do
+  def listen(port) do
+    {:ok, socket} =
+      :gen_tcp.listen(port, [:binary, packet: :line, active: false, reuseaddr: true])
+
+    accept_loop(socket)
+  end
+
   def accept_loop(socket) do
     {:ok, client} = :gen_tcp.accept(socket)
 
-    # Spawn a new process to receive and cast the messages
-    spawn(fn ->
-      case :gen_tcp.recv(client, 0) do
-        {:ok, data} ->
-          msg = String.trim(data)
-          GenServer.cast(Server, {:handle_network_message, msg})
-
-        _ ->
-          :ok
-      end
-
-      :gen_tcp.close(client)
+    Task.Supervisor.start_child(LeaderElection.TaskSupervisor, fn ->
+      handle_client(client)
     end)
 
     accept_loop(socket)
+  end
+
+  defp handle_client(client) do
+    case :gen_tcp.recv(client, 0) do
+      {:ok, data} ->
+        msg = String.trim(data)
+        GenServer.cast(Server, {:handle_network_message, msg})
+
+      _ ->
+        :ok
+    end
+
+    :gen_tcp.close(client)
   end
 
   def send_message(to_id, msg) do

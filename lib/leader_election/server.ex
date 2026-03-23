@@ -4,22 +4,25 @@ defmodule Server do
   import MessageHandler
   import Network
 
-  def start_node(id) do
-    port = 5000 + id
-    state = %NodeState{id: id, port: port}
+  def child_spec(node_id) do
+    %{
+      id: __MODULE__,
+      start: {__MODULE__, :start_link, [node_id]}
+    }
+  end
 
-    IO.puts("Starting Node #{id} on port #{port}...")
-    GenServer.start_link(__MODULE__, state, name: __MODULE__)
+  def start_link(id) do
+    GenServer.start_link(__MODULE__, id, name: __MODULE__)
   end
 
   @impl GenServer
-  def init(state) do
-    {:ok, socket} =
-      :gen_tcp.listen(state.port, [:binary, packet: :line, active: false, reuseaddr: true])
+  def init(id) do
+    port = 5000 + id
+    state = %NodeState{id: id, port: port}
 
     IO.puts("Node started on port #{state.port}")
 
-    spawn(fn -> accept_loop(socket) end)
+    Task.start_link(fn -> Network.listen(state.port) end)
 
     # Newly started nodes initiate the leader selection procedure immediately after starting
     send(self(), :start_election)
