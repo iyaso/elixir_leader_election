@@ -1,4 +1,4 @@
-# ElixirLeaderElection
+# Elixir Leader Election
 
 **TODO: Add description**
 

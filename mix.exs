@@ -1,4 +1,4 @@
-defmodule ElixirLeaderElection.MixProject do
+defmodule LeaderElection.MixProject do
   use Mix.Project
 
   def project do
@@ -14,6 +14,7 @@ defmodule ElixirLeaderElection.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
+      mod: {LeaderElection, []},
       extra_applications: [:logger]
     ]
   end
