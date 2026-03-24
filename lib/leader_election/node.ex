@@ -79,6 +79,7 @@ defmodule LeaderElection.Node do
     if more_senior_nodes === [] do
       IO.puts("I'm the most senior node, declaring myself as leader")
       send(self(), :declare_leadership)
+      {:noreply, state}
     else
       # The node that started the election sends an ALIVE? message to all nodes more senior than itself
       broadcast_message(more_senior_nodes, "ALIVE? #{state.id}")
