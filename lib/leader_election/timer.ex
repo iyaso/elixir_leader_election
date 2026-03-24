@@ -1,4 +1,8 @@
 defmodule LeaderElection.Timer do
+  @moduledoc """
+  Timers control.
+  """
+
   def cancel_timer(state, timer_key) do
     timer = Map.get(state, timer_key)
 

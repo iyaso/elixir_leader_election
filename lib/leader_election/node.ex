@@ -1,4 +1,10 @@
 defmodule LeaderElection.NodeState do
+  @moduledoc """
+  Defines the state of a node.
+
+  Includes information about node identity, leader and timers.
+  """
+
   defstruct id: nil,
             port: nil,
             leader_id: nil,
@@ -12,6 +18,18 @@ defmodule LeaderElection.NodeState do
 end
 
 defmodule LeaderElection.Node do
+  @moduledoc """
+  GenServer that implements a node for the leader election
+
+  This module handles the full lifecycle of a node, including:
+  - Starting TCP listeners.
+  - Participating in elections.
+  - Declaring leadership.
+  - Periodic pings to the leader node.
+  - Handling leader timeout.
+  - Casting network messages and forwarding to MessageHandler.
+  """
+
   use GenServer
   import LeaderElection.HelperFunctions
   import LeaderElection.MessageHandler
@@ -58,7 +76,7 @@ defmodule LeaderElection.Node do
 
     more_senior_nodes = get_more_senior_nodes(state)
 
-    if length(more_senior_nodes) === 0 do
+    if more_senior_nodes === [] do
       IO.puts("I'm the most senior node, declaring myself as leader")
       send(self(), :declare_leadership)
     else

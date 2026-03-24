@@ -1,4 +1,8 @@
 defmodule LeaderElection.Network do
+  @moduledoc """
+  Network setup logic and communication between nodes.
+  """
+
   def listen(port) do
     {:ok, socket} =
       :gen_tcp.listen(port, [:binary, packet: :line, active: false, reuseaddr: true])

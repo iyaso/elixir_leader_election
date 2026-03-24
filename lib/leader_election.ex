@@ -1,4 +1,8 @@
 defmodule LeaderElection do
+  @moduledoc """
+  Application entry point.
+  """
+
   use Application
 
   def start(_type, _args) do

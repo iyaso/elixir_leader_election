@@ -1,4 +1,8 @@
 defmodule LeaderElection.MessageHandler do
+  @moduledoc """
+  Handle network messages.
+  """
+
   import LeaderElection.HelperFunctions
   import LeaderElection.Network
   import LeaderElection.Timer
@@ -10,7 +14,7 @@ defmodule LeaderElection.MessageHandler do
 
     more_senior_nodes = get_more_senior_nodes(state)
 
-    if length(more_senior_nodes) === 0 do
+    if more_senior_nodes === [] do
       IO.puts("I'm the most senior node, declaring myself as leader")
       send(self(), :declare_leadership)
     else

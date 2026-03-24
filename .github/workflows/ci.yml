@@ -1,9 +1,9 @@
 on: push
 
 jobs:
-  test:
+  test-and-analysis:
     runs-on: ubuntu-24.04
-    name: Test Leader Election
+    name: Test and Code Analysis
     strategy:
       matrix:
         otp: ['28.4.1']
@@ -15,4 +15,5 @@ jobs:
           otp-version: ${{matrix.otp}}
           elixir-version: ${{matrix.elixir}}
       - run: mix deps.get
+      - run: mix credo
       - run: mix test
