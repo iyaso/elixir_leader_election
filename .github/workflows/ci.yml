@@ -1,0 +1,18 @@
+on: push
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    name: Test Leader Election
+    strategy:
+      matrix:
+        otp: ['28.4.1']
+        elixir: ['1.19.5']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{matrix.otp}}
+          elixir-version: ${{matrix.elixir}}
+      - run: mix deps.get
+      - run: mix test
