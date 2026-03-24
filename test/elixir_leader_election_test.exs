@@ -1,8 +1,4 @@
-defmodule ElixirLeaderElectionTest do
+defmodule LeaderElectionTest do
   use ExUnit.Case
-  doctest ElixirLeaderElection
-
-  test "greets the world" do
-    assert ElixirLeaderElection.hello() == :world
-  end
+  doctest LeaderElection
 end
