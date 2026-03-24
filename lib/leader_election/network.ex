@@ -23,8 +23,7 @@ defmodule LeaderElection.Network do
   defp handle_client(client) do
     case :gen_tcp.recv(client, 0) do
       {:ok, data} ->
-        msg = String.trim(data)
-        GenServer.cast(Node, {:handle_network_message, msg})
+        GenServer.call(LeaderElection.Node, {:handle_network_message, String.trim(data)})
 
       _ ->
         :ok

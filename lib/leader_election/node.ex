@@ -126,15 +126,15 @@ defmodule LeaderElection.Node do
     {:noreply, state}
   end
 
-  #### TCP messages cast and handlerss
+  #### TCP messages call and handlers
 
   @impl GenServer
-  def handle_cast({:handle_network_message, msg}, state) do
+  def handle_call({:handle_network_message, msg}, _from, state) do
     # IO.puts("Received message: #{msg}")
 
     [message, sender_id_str] = msg |> String.trim() |> String.split(" ")
     sender_id = String.to_integer(sender_id_str)
     new_state = handle_message(message, sender_id, state)
-    {:noreply, new_state}
+    {:reply, :ok, new_state}
   end
 end
